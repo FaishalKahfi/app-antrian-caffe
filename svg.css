@@ -1,0 +1,39 @@
+/* ============================================================
+   svg.css — Clean Modern Vector Icon Styling
+   ============================================================ */
+
+.svgicon {
+  width: 22px;
+  height: 22px;
+  fill: currentColor;
+  stroke: currentColor;
+  stroke-width: 0.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  display: inline-block;
+  vertical-align: middle;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+[class*="di-"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  line-height: 1;
+}
+
+.img-24 .svgicon {
+  width: 18px;
+  height: 18px;
+}
+
+.feature-icon-box .svgicon {
+  width: 24px;
+  height: 24px;
+}
+
+.chart-svg {
+  stroke: none;
+  filter: none;
+}

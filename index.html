@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="id" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="Caffe Piawai — Sistem Antrian Pelanggan, Layar TV Barista (TTS), Self-Order Meja, Kasir POS & Simulasi Antrian Caffe.">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+    <title>Caffe Piawai — Smart Queue &amp; POS System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="svg.css">
+</head>
+<body>
+
+  <!-- Progress bar navigasi tipis di bagian paling atas -->
+  <div id="navProgress"></div>
+
+  <div class="app-shell" id="body">
+    <!-- Topbar Modern Sticky -->
+    <header id="stickyHeaderWrap" class="app-topbar-wrap">
+      <div class="app-topbar">
+        <a href="?home" onclick="return web.navigate('home')" class="brand-logo">
+          <span class="brand-icon">&#9749;</span>
+          <span class="brand-text">
+            <span class="brand-title">Caffe Piawai</span>
+            <span class="brand-subtitle">Queue &amp; POS System</span>
+          </span>
+        </a>
+
+        <div class="menu-bar" id="stickyMenu">
+          <button type="button" class="burger" id="burgerBtn" aria-label="Menu">&#9776;</button>
+          <nav class="nav-links" id="navLinks">
+            <a href="?home" onclick="return web.navigate('home')">Beranda</a>
+          </nav>
+        </div>
+
+        <div id="authSlot" class="auth-slot"></div>
+      </div>
+    </header>
+
+    <!-- Konten Utama SPA -->
+    <main class="app-content" id="content"></main>
+
+    <!-- FORM DRAWER — panel slide-over modern dari kanan -->
+    <div id="formDrawerOverlay" class="form-drawer-overlay" onclick="web.closeDrawer()"></div>
+    <div id="formDrawerPanel" class="form-drawer" role="dialog" aria-modal="true" aria-labelledby="formDrawerTitle">
+      <div class="form-drawer-header">
+        <span class="form-drawer-header-title" id="formDrawerTitle"></span>
+        <button type="button" class="form-drawer-close" onclick="web.closeDrawer()">&times; Tutup</button>
+      </div>
+      <div class="form-drawer-body" id="formDrawerBody"></div>
+    </div>
+
+    <!-- Footer Modern Bersih -->
+    <footer class="app-footer">
+      <div class="app-footer-inner">
+        <div class="footer-left">
+          <strong>&#9749; Caffe Piawai</strong> &mdash; Sistem Antrian Barista, Self-Order &amp; Kasir POS Caffe
+        </div>
+        <div class="footer-right">
+          Simulasi &amp; Pemodelan Antrian ($M/M/c$) &bull; &copy; 2026
+        </div>
+      </div>
+    </footer>
+  </div>
+
+<script type="text/javascript" src="svg.js"></script>
+<script type="text/javascript" src="engine.js"></script>
+<script type="text/javascript" src="db.js"></script>
+<script type="text/javascript" src="auth.js"></script>
+
+<script type="text/javascript">
+if (typeof svg !== 'undefined') svg.di();
+</script>
+
+<script type="text/javascript">
+function renderMenu() {
+    const navLinks = document.getElementById('navLinks');
+    if (!navLinks) return;
+
+    const user = (typeof auth !== 'undefined') ? auth.currentUser() : null;
+    const visible = p => (!p.guestOnly || !user) && (!p.role || (user && p.role.includes(user.role)));
+    const currentPath = (window.location.search.substring(1) || 'home').split('/')[0];
+
+    navLinks.innerHTML = siteConfig
+        .filter(p => p.menu)
+        .map(p => {
+            if (Array.isArray(p.children)) {
+                const children = p.children.filter(visible);
+                if (!children.length) return '';
+                const parentActive = children.some(c => c.slug === currentPath) ? 'active' : '';
+                const items = children
+                    .map(c => `<a href="?${c.slug}" data-slug="${c.slug}" class="${c.slug === currentPath ? 'active' : ''}" onclick="return web.navigate('${c.slug}')">${c.label}</a>`)
+                    .join('\n');
+                return `<div class="nav-parent ${parentActive}">
+                    <span class="nav-parent-label" onclick="web.toggleSubmenu(this)">${p.label} <span class="nav-caret">&#9662;</span></span>
+                    <div class="nav-children">${items}</div>
+                </div>`;
+            }
+            if (!visible(p)) return '';
+            return `<a href="?${p.slug}" data-slug="${p.slug}" class="${p.slug === currentPath ? 'active' : ''}" onclick="return web.navigate('${p.slug}')">${p.label}</a>`;
+        })
+        .filter(Boolean)
+        .join('\n');
+
+    if (typeof auth !== 'undefined') auth.renderAuthUI();
+}
+</script>
+
+<script src="dataset.js"></script>
+<script>
+    loadPageScripts(pageFiles, () => {
+        renderMenu();
+        web.navigate();
+    });
+</script>
+
+</body>
+</html>
