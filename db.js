@@ -6,7 +6,7 @@
 // ============================================================
 
 // GANTI dengan URL hasil `wrangler deploy` di repo api-pos, tanpa slash di akhir.
-const API_BASE = 'https://pos.piawai.workers.dev';
+const API_BASE = 'https://api-antrian-caffe.faishalkahfi041004.workers.dev';
 
 const SCOPED_TABLES = new Set([
     'produk', 'lokasi', 'lokasi_produk', 'kontak',
